@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { User } from "@/types/user"
-import { CheckCircle, Eye, MoreHorizontal, Pencil, XCircle } from "lucide-react"
+import { CheckCircle, Eye, MoreHorizontal, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
@@ -23,10 +23,6 @@ export default function UserActions({ user }: { user: User }) {
         <DropdownMenuItem onClick={() => router.push(`/users/${user.id}`)}>
           <Eye className="h-4 w-4 mr-2" />
           Visualizar
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push(`/users/${user.id}/edit`)}>
-          <Pencil className="h-4 w-4 mr-2" />
-          Editar
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

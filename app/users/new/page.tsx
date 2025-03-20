@@ -1,21 +1,52 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { UserForm } from "@/components/UserForm";
+import { UserBasicInfo } from "@/components/user/UserBasicInfo";
+import { UserHeader } from "@/components/user/UserHeader";
+import { UserPassword } from "@/components/user/UserPassword";
+import { UserPermissions } from "@/components/user/UserPermissions";
+import { Module } from "@/types/module";
+import { PermissionGroup } from "@/types/permission-group";
+import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function NewUserPage() {
   const router = useRouter();
+  const [user, setUser] = useState<User>({
+    name: "",
+    email: "",
+    status: "active",
+    permissions: {},
+    useGroupPermissions: false,
+    permissionGroup: {
+      id: "",
+      name: "",
+      description: "",
+      permissions: {},
+      users: [],
+    },
+    createdAt: new Date(),
+    password: "",
+    avatar: "",
+    lastLogin: undefined,
+    lastPasswordChange: undefined,
+    id: "",
+  });
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [modules, setModules] = useState<Module[]>([]);
+  const [permissionGroups, setPermissionGroups] = useState<PermissionGroup[]>([]);
 
-  const handleSubmit = async (userData: any, password?: string) => {
+  const handleSubmit = async () => {
     try {
       const response = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...userData, password }),
+        body: JSON.stringify({ ...user, password }),
       });
 
       if (!response.ok) {
@@ -32,18 +63,36 @@ export default function NewUserPage() {
 
   return (
     <div className="container mx-auto py-4 px-4">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-2">
-        Voltar
-      </Button>
+      <UserHeader title="Novo Usuário" description="Crie um novo usuário no sistema" />
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
-        <div>
-          <h1 className="text-3xl font-bold">Novo Usuário</h1>
-          <p className="text-muted-foreground mt-1">Crie um novo usuário no sistema</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-4">
+          <UserBasicInfo user={user} setUser={setUser} />
+          <UserPassword
+            isNewUser={true}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <UserPermissions
+            user={user}
+            setUser={setUser}
+            modules={modules}
+            permissionGroups={permissionGroups}
+          />
         </div>
       </div>
 
-      <UserForm isNewUser={true} onSubmit={handleSubmit} onCancel={() => router.back()} />
+      <div className="mt-4 flex justify-end gap-4">
+        <Button variant="outline" onClick={() => router.back()}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSubmit}>Criar Usuário</Button>
+      </div>
     </div>
   );
 }

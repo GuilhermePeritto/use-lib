@@ -2,11 +2,11 @@ import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   await dbConnect();
 
   try {
-    const { id } = params;
+    const { id } = await params;
     const user = await User.findById(id);
 
     if (!user) {
