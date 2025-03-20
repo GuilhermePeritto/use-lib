@@ -25,12 +25,12 @@ const userSchema: Schema = new mongoose.Schema({
   avatar: { type: String, default: "./placeholder.svg" },
   status: { type: String, enum: ["active", "inactive"], default: "active" },
   useGroupPermissions: { type: Boolean, default: true },
-  permissionGroup: { type: Schema.Types.ObjectId, ref: "permissionGroup" },
+  permissionGroup: { type: Schema.Types.ObjectId, ref: "PermissionGroup" },
   permissions: { type: Map, of: [String], default: {} },
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date },
   lastPasswordChange: { type: Date },
-});
+}, { strict: false });
 
 userSchema.methods.matchPassword = async function (enteredPassword: string) {
   return await bcrypt.compare(enteredPassword, this.password);
@@ -45,6 +45,6 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password as string, salt);
 });
 
-const UserModel = mongoose.models.User || mongoose.model("user", userSchema);
+const UserModel = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 
 export default UserModel;

@@ -1,12 +1,11 @@
-import mongoose from "mongoose";
-import { User } from "./user";
+import { User } from "@/types/user";
 
 export interface PermissionGroup {
-    id: mongoose.Types.ObjectId;
-    name: string;
-    description: string;
-    permissions: {
-        [key: string]: string[];
-    };
-    users: User[];
+  _id: string;
+  name: string;
+  description: string;
+  permissions: {
+    [key: string]: string[];
+  };
+  users: User[];
 }

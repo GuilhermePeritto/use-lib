@@ -13,11 +13,11 @@ export const permissionGroupSchema: Schema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   description: { type: String, required: true },
   permissions: { type: Map, of: [String], default: {} }, // Permissões como um mapa
-  users: [{ type: Schema.Types.ObjectId, ref: "user" }], // Referência aos usuários
+  users: [{ type: Schema.Types.ObjectId, ref: "User" }], // Referência aos usuários
 });
 
 const PermissionGroupModel =
   mongoose.models.PermissionGroup ||
-  mongoose.model("permissionGroup", permissionGroupSchema);
+  mongoose.model<IPermissionGroup>("PermissionGroup", permissionGroupSchema);
 
 export default PermissionGroupModel;
