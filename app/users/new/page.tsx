@@ -6,7 +6,7 @@ import { UserHeader } from "@/components/user/UserHeader";
 import { UserPassword } from "@/components/user/UserPassword";
 import { UserPermissions } from "@/components/user/UserPermissions";
 import { Module } from "@/types/module";
-import { PermissionGroup } from "@/types/permission-group";
+import { IPermissionGroup } from "@/types/permission-group";
 import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -37,7 +37,7 @@ export default function NewUserPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [modules, setModules] = useState<Module[]>([]);
-  const [permissionGroups, setPermissionGroups] = useState<PermissionGroup[]>([]);
+  const [permissionGroups, setPermissionGroups] = useState<IPermissionGroup[]>([]);
 
   const handleSubmit = async () => {
     try {

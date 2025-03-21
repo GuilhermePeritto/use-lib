@@ -1,12 +1,20 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { formatDate } from "@/lib/utils"
-import { User } from "@/types/user"
-import { Calendar, CheckCircle, XCircle } from "lucide-react"
-import UserActions from "./UserActions"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatDate } from "@/lib/utils";
+import { IPermissionGroup } from "@/models/PermissionGroup";
+import { IUser } from "@/models/User";
+import { Calendar, CheckCircle, XCircle } from "lucide-react";
+import UserActions from "./UserActions";
 
-export default function UsersTable({ users }: { users: User[] }) {
+interface UsersTableProps {
+  users: IUser[];
+}
+
+export default function UsersTable({ users }: UsersTableProps) {
+
+  const permissionGroup = users.map(user => user.permissionGroup) as IPermissionGroup[];
+
   return (
     <Table>
       <TableHeader>
@@ -33,11 +41,10 @@ export default function UsersTable({ users }: { users: User[] }) {
             </TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>
-              {user.useGroupPermissions ? (
+              {user.useGroupPermissions  ? (
                 <Badge variant="secondary">
-                  {typeof user.permissionGroup === "object" && "name" in user.permissionGroup
-                    ? user.permissionGroup.name
-                    : "N/A"}
+                  {permissionGroup.map(group => group?.name || "Sem grupo"
+                    )}
                 </Badge>
               ) : (
                 <Badge variant="outline">Personalizadas</Badge>
@@ -69,5 +76,5 @@ export default function UsersTable({ users }: { users: User[] }) {
         ))}
       </TableBody>
     </Table>
-  )
+  );
 }

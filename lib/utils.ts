@@ -152,6 +152,7 @@ export function isSameDate(date1: string | Date, date2: string | Date): boolean 
 
 /**
  * Converte um tipo (User, Product, etc.) de volta para um documento do Mongoose (IUser, IProduct, etc.).
+ * Apenas converte `id` para `_id` e mantém todos os outros campos intactos, incluindo objetos aninhados.
  * @param type Objeto do tipo.
  * @returns Documento do Mongoose.
  * @throws Erro se o tipo for nulo ou indefinido.
@@ -163,16 +164,13 @@ export const convertTypeToModel = <TType, TModel extends Document>(
     throw new Error("Tipo não pode ser nulo ou indefinido.");
   }
 
-  const result: any = {};
+  // Cria uma cópia profunda do objeto
+  const result = JSON.parse(JSON.stringify(type));
 
-  for (const key in type) {
-    if (type.hasOwnProperty(key)) {
-      if (key === "id") {
-        result["_id"] = type[key];
-      } else {
-        result[key] = type[key];
-      }
-    }
+  // Converte `id` para `_id` se existir
+  if ("id" in result) {
+    result._id = result.id;
+    delete result.id; // Remove o campo `id` para evitar duplicação
   }
 
   return result as Partial<TModel>;
@@ -180,6 +178,7 @@ export const convertTypeToModel = <TType, TModel extends Document>(
 
 /**
  * Converte um documento do Mongoose (IUser, IProduct, etc.) para um tipo específico (User, Product, etc.).
+ * Apenas converte `_id` para `id` e mantém todos os outros campos intactos, incluindo objetos aninhados.
  * @param model Documento do Mongoose.
  * @returns Objeto convertido para o tipo desejado.
  * @throws Erro se o modelo for nulo ou indefinido.
@@ -191,19 +190,13 @@ export const convertModelToType = <TModel extends Document, TType>(
     throw new Error("Modelo não pode ser nulo ou indefinido.");
   }
 
-  const result: any = {};
-  const modelObject = model.toObject(); // Converte para objeto JavaScript simples
+  // Cria uma cópia profunda do objeto
+  const result = JSON.parse(JSON.stringify(model.toObject()));
 
-  // Itera sobre as chaves do objeto
-  for (const key in modelObject) {
-    if (modelObject.hasOwnProperty(key)) {
-      // Converte _id para id
-      if (key === "_id") {
-        result["id"] = modelObject[key].toString();
-      } else {
-        result[key] = modelObject[key];
-      }
-    }
+  // Converte `_id` para `id` se existir
+  if ("_id" in result) {
+    result.id = result._id.toString(); // Converte ObjectId para string
+    delete result._id; // Remove o campo `_id` para evitar duplicação
   }
 
   return result as TType;

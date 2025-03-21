@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoose, { Document, Schema } from "mongoose";
+import { IPermissionGroup } from "./PermissionGroup";
 
 export interface IUser extends Document {
   name: string;
@@ -8,7 +9,7 @@ export interface IUser extends Document {
   avatar?: string;
   status: "active" | "inactive";
   useGroupPermissions: boolean;
-  permissionGroup: mongoose.Types.ObjectId;
+  permissionGroup: mongoose.Types.ObjectId | IPermissionGroup;
   permissions?: {
     [key: string]: string[];
   };

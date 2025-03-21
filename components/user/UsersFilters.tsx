@@ -21,7 +21,7 @@ export default function UsersFilters() {
     return (
         <div className="flex flex-col space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div className="relative flex-1 w-full sm:max-w-md">
+                <div className="relative flex-1 w-full sm:max-w-md bg-card rounded-lg">
                     <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         placeholder="Buscar por nome, email ou grupo..."
@@ -32,14 +32,14 @@ export default function UsersFilters() {
                 </div>
                 <div className="flex items-center">
                     {(searchQuery || statusFilter !== "all" || permissionFilter !== "all") && (
-                        <Button variant="ghost" onClick={clearFilters} size="sm" className="h-9">
+                        <Button variant="ghost" onClick={clearFilters} size="sm" className="h-9 ">
                             <RefreshCw className="h-4 w-4 mr-2" />
                             Limpar filtros
                         </Button>
                     )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="ml-2 h-9">
+                            <Button variant="outline" size="sm" className="ml-2 h-9 bg-card">
                                 <Filter className="h-4 w-4 mr-2" />
                                 Filtros
                                 {(statusFilter !== "all" || permissionFilter !== "all") && (

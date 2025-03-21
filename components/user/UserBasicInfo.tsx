@@ -4,13 +4,13 @@ import { CardContent, CardDescription, CardHeader, CardTitle } from "@/component
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User } from "@/types/user";
+import { IUser } from "@/models/User"; // Importe a interface IUser
 import { Upload } from "lucide-react";
-import { UseCard } from "../UseCard";
+import UseCard from "../UseCard";
 
 interface UserBasicInfoProps {
-  user: User;
-  setUser: (user: User) => void;
+  user: IUser;
+  setUser: (user: IUser) => void;
 }
 
 export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
@@ -37,7 +37,7 @@ export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
           <Input
             id="name"
             value={user.name}
-            onChange={(e) => setUser({ ...user, name: e.target.value })}
+            onChange={(e) => setUser(Object.assign(Object.create(Object.getPrototypeOf(user)), user, { name: e.target.value }))}
             required
           />
         </div>
@@ -48,7 +48,7 @@ export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
             id="email"
             type="email"
             value={user.email}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            onChange={(e) => setUser(Object.assign(Object.create(Object.getPrototypeOf(user)), user, { email: e.target.value }))}
             required
           />
         </div>
@@ -57,7 +57,7 @@ export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
           <Label htmlFor="status">Status</Label>
           <Select
             value={user.status}
-            onValueChange={(value: "active" | "inactive") => setUser({ ...user, status: value })}
+            onValueChange={(value: "active" | "inactive") => setUser(Object.assign(Object.create(Object.getPrototypeOf(user)), user, { status: value }))}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione um status" />

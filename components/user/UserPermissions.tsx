@@ -4,21 +4,21 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { IPermissionGroup } from "@/models/PermissionGroup";
+import { IUser } from "@/models/User"; // Importe a interface IUser
 import { Module } from "@/types/module";
-import { PermissionGroup } from "@/types/permission-group";
-import { User } from "@/types/user";
 import UseCard from "../UseCard";
 
 interface UserPermissionsProps {
-  user: User;
-  setUser: (user: User) => void;
+  user: IUser;
+  setUser: (user: IUser) => void;
   modules: Module[];
-  permissionGroups: PermissionGroup[];
+  permissionGroups: IPermissionGroup[];
 }
 
 export function UserPermissions({ user, setUser, modules, permissionGroups }: UserPermissionsProps) {
   const updatePermission = (module: string, action: string, checked: boolean) => {
-    setUser((prev: User) => {
+    setUser((prev: IUser) => {
       const newPermissions = { ...(prev.permissions || {}) };
 
       if (!newPermissions[module]) {
@@ -72,9 +72,9 @@ export function UserPermissions({ user, setUser, modules, permissionGroups }: Us
           <div className="space-y-2">
             <Label htmlFor="permissionGroup">Grupo de Permissões</Label>
             <Select
-              value={user.permissionGroup.id}
+              value={user.permissionGroup._id.toString()}
               onValueChange={(value) => {
-                const selectedGroup = permissionGroups.find((group) => group.id === value);
+                const selectedGroup = permissionGroups.find((group) => group._id.toString() === value);
                 if (selectedGroup) {
                   setUser({
                     ...user,
@@ -88,7 +88,7 @@ export function UserPermissions({ user, setUser, modules, permissionGroups }: Us
               </SelectTrigger>
               <SelectContent>
                 {permissionGroups.map((group) => (
-                  <SelectItem key={group.id} value={group.id}>
+                  <SelectItem key={group._id.toString()} value={group._id.toString()}>
                     {group.name}
                   </SelectItem>
                 ))}

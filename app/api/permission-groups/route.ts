@@ -1,10 +1,9 @@
-// app/api/permission-groups/route.ts
 import dbConnect from "@/lib/dbConnect";
 import {
-    createPermissionGroup,
-    deletePermissionGroup,
-    getPermissionGroups,
-    updatePermissionGroup
+  createPermissionGroup,
+  deletePermissionGroup,
+  getPermissionGroups,
+  updatePermissionGroup,
 } from "@/services/permissionGroupService";
 import { NextResponse } from "next/server";
 

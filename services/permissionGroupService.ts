@@ -1,49 +1,44 @@
-import { convertModelToType, convertTypeToModel } from "@/lib/utils";
-import PermissionGroupModel, { IPermissionGroup } from "@/models/PermissionGroup";
-import { PermissionGroup } from "@/types/permission-group";
+import { IPermissionGroup, PermissionGroupModel } from "@/models/PermissionGroup";
 
+// Criar um novo grupo de permissões
 export const createPermissionGroup = async (
-  permissionGroupData: PermissionGroup
-): Promise<PermissionGroup> => {
-  const permissionGroupModelData = convertTypeToModel<PermissionGroup, IPermissionGroup>(permissionGroupData);
-  const permissionGroup = new PermissionGroupModel(permissionGroupModelData);
+  permissionGroupData: IPermissionGroup
+): Promise<IPermissionGroup> => {
+  const permissionGroup = new PermissionGroupModel(permissionGroupData);
   const savedPermissionGroup = await permissionGroup.save();
-  return convertModelToType<IPermissionGroup, PermissionGroup>(savedPermissionGroup);
+  return savedPermissionGroup;
 };
 
-export const getPermissionGroups = async (): Promise<PermissionGroup[]> => {
-  const permissionGroups = await PermissionGroupModel.find().populate("users");
-  return permissionGroups.map(convertModelToType<IPermissionGroup, PermissionGroup>);
+// Buscar todos os grupos de permissões
+export const getPermissionGroups = async (): Promise<IPermissionGroup[]> => {
+  return await PermissionGroupModel.find().populate("users");
 };
 
+// Buscar um grupo de permissões por ID
 export const getPermissionGroupById = async (
   id: string
-): Promise<PermissionGroup | null> => {
+): Promise<IPermissionGroup | null> => {
   const permissionGroup = await PermissionGroupModel.findById(id).populate("users");
-  return permissionGroup
-    ? convertModelToType<IPermissionGroup, PermissionGroup>(permissionGroup)
-    : null;
+  return permissionGroup;
 };
 
+// Atualizar um grupo de permissões por ID
 export const updatePermissionGroup = async (
   id: string,
-  permissionGroupData: Partial<PermissionGroup>
-): Promise<PermissionGroup | null> => {
-  const permissionGroupModelData = convertTypeToModel<Partial<PermissionGroup>, IPermissionGroup>(permissionGroupData);
+  permissionGroupData: Partial<IPermissionGroup>
+): Promise<IPermissionGroup | null> => {
+    debugger
   const updatedPermissionGroup = await PermissionGroupModel.findByIdAndUpdate(
     id,
-    permissionGroupModelData,
+    permissionGroupData,
     { new: true }
   ).populate("users");
 
-  return updatedPermissionGroup
-    ? convertModelToType<IPermissionGroup, PermissionGroup>(updatedPermissionGroup)
-    : null;
+  return updatedPermissionGroup;
 };
 
-export const deletePermissionGroup = async (id: string): Promise<PermissionGroup | null> => {
+// Deletar um grupo de permissões por ID
+export const deletePermissionGroup = async (id: string): Promise<IPermissionGroup | null> => {
   const deletedPermissionGroup = await PermissionGroupModel.findByIdAndDelete(id);
-  return deletedPermissionGroup
-    ? convertModelToType<IPermissionGroup, PermissionGroup>(deletedPermissionGroup)
-    : null;
+  return deletedPermissionGroup;
 };

@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { IUser } from "./User";
 
 export interface IPermissionGroup extends Document {
   name: string;
@@ -6,7 +7,7 @@ export interface IPermissionGroup extends Document {
   permissions: {
     [key: string]: string[];
   };
-  users: mongoose.Types.ObjectId[];
+  users: mongoose.Types.ObjectId[] | IUser[];
 }
 
 export const permissionGroupSchema: Schema = new mongoose.Schema({
@@ -16,8 +17,6 @@ export const permissionGroupSchema: Schema = new mongoose.Schema({
   users: [{ type: Schema.Types.ObjectId, ref: "User" }], // Referência aos usuários
 }, { strict: false });
 
-const PermissionGroupModel =
+export const PermissionGroupModel =
   mongoose.models.PermissionGroup ||
   mongoose.model<IPermissionGroup>("PermissionGroup", permissionGroupSchema);
-
-export default PermissionGroupModel;

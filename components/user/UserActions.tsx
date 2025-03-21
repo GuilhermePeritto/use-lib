@@ -1,15 +1,19 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { User } from "@/types/user"
-import { CheckCircle, Eye, MoreHorizontal, XCircle } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { IUser } from "@/models/User"; // Importe a interface IUser
+import { CheckCircle, Eye, MoreHorizontal, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function UserActions({ user }: { user: User }) {
-  const router = useRouter()
-  const [showDeactivateDialog, setShowDeactivateDialog] = useState(false)
+interface UserActionsProps {
+  user: IUser;
+}
+
+export default function UserActions({ user }: UserActionsProps) {
+  const router = useRouter();
+  const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
 
   return (
     <DropdownMenu>
@@ -20,7 +24,7 @@ export default function UserActions({ user }: { user: User }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => router.push(`/users/${user.id}`)}>
+        <DropdownMenuItem onClick={() => router.push(`/users/${user._id}`)}>
           <Eye className="h-4 w-4 mr-2" />
           Visualizar
         </DropdownMenuItem>
@@ -43,5 +47,5 @@ export default function UserActions({ user }: { user: User }) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
