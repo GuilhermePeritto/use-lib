@@ -76,7 +76,7 @@ export default function GroupCard({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDeleteGroup}
                     className="bg-red-500 hover:bg-red-600 cursor-pointer"

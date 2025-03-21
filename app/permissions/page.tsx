@@ -1,3 +1,4 @@
+// PermissionsPage.tsx
 'use client';
 
 import GroupList from "@/components/permissions/GroupList";
@@ -11,7 +12,6 @@ export default function PermissionsPage() {
     const [groups, setGroups] = useState<IPermissionGroup[]>([]);
     const [modules, setModules] = useState<IModule[]>([]);
 
-    // Função para carregar os dados iniciais
     const fetchData = async () => {
         try {
             const [groupsResponse, modulesResponse] = await Promise.all([
@@ -37,12 +37,10 @@ export default function PermissionsPage() {
         fetchData();
     }, []);
 
-    // Função para adicionar um novo grupo
     const handleAddNewGroup = (newGroup: IPermissionGroup) => {
         setGroups((prevGroups) => [...prevGroups, newGroup]);
     };
 
-    // Função para atualizar um grupo existente
     const handleUpdateGroup = (updatedGroup: IPermissionGroup) => {
         setGroups((prevGroups) =>
             prevGroups.map((group) =>
@@ -51,7 +49,6 @@ export default function PermissionsPage() {
         );
     };
 
-    // Função para excluir um grupo
     const handleDeleteGroup = (groupId: string) => {
         setGroups((prevGroups) =>
             prevGroups.filter((group) => group._id !== groupId)
