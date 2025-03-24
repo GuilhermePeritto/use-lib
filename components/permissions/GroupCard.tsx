@@ -92,8 +92,6 @@ export default function GroupCard({
               group={group}
               modules={modules}
               onUpdate={onUpdate}
-              onAddUserToGroup={() => {}}
-              onRemoveUserFromGroup={() => {}}
             />
           </div>
         </div>

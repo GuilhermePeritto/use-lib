@@ -5,6 +5,7 @@ import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { Component } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -17,27 +18,92 @@ interface ManageGroupDialogProps {
     group: IPermissionGroup;
     modules: IModule[];
     onUpdate: (updatedGroup: IPermissionGroup) => void;
-    onAddUserToGroup: (groupId: any, userId: any) => void;
-    onRemoveUserFromGroup: (groupId: any, userId: any) => void;
 }
 
 export default function ManageGroupDialog({
     group,
     modules,
     onUpdate,
-    onAddUserToGroup,
-    onRemoveUserFromGroup,
 }: ManageGroupDialogProps) {
     const [permissionGroup, setPermissionGroup] = useState<IPermissionGroup>(group);
-
+    const [openedDialog, setOpenedDialog] = useState(false);
     const [filteredModules, setFilteredModules] = useState<IModule[]>(modules);
 
     const filterModules = (name: string) => {
         setFilteredModules(modules.filter((module) => module.name.toLowerCase().includes(name.toLowerCase())));
     }
 
+    const handleUpdateGroup = async () => {
+        try {
+            const response = await fetch(`/api/permission-groups/${group._id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(permissionGroup),
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao atualizar grupo");
+            }
+
+            onUpdate(permissionGroup);
+            setOpenedDialog(false);
+            toast.success("Grupo atualizado com sucesso");
+        } catch (error) {
+            toast.error("Erro ao atualizar grupo");
+        }
+    };
+
+    const handlerAddUserToGroup = async (groupId: string, userId: string) => {
+        debugger
+        try {
+          const response = await fetch('/api/permission-groups/users', {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ groupId, userId }),
+          });
+      
+          const data = await response.json();
+      
+          if (response.ok) {
+            setPermissionGroup(data);
+            toast.success("Usuário adicionado ao grupo com sucesso");
+          } else {
+            toast.error(data.error || "Falha ao adicionar usuário ao grupo");
+          }
+        } catch (error) {
+          toast.error("Erro na comunicação com o servidor");
+        }
+      };
+      
+      const handlerRemoveUserFromGroup = async (groupId: string, userId: string) => {
+        try {
+          const response = await fetch('/api/permission-groups/users', {
+            method: "DELETE",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ groupId, userId }),
+          });
+      
+          const data = await response.json();
+      
+          if (response.ok) {
+            setPermissionGroup(data);
+            toast.success("Usuário removido do grupo com sucesso");
+          } else {
+            toast.error(data.error || "Falha ao remover usuário do grupo");
+          }
+        } catch (error) {
+          toast.error("Erro na comunicação com o servidor");
+        }
+      };
+
     return (
-        <Dialog>
+        <Dialog open={openedDialog} onOpenChange={setOpenedDialog}>
             <DialogTrigger asChild>
                 <Button className="cursor-pointer" variant="outline">Gerenciar</Button>
             </DialogTrigger>
@@ -72,8 +138,8 @@ export default function ManageGroupDialog({
                     <TabsContent value="users">
                         <UsersTab
                             group={group}
-                            onAddUserToGroup={(userId) => onAddUserToGroup(group._id, userId)}
-                            onRemoveUserFromGroup={(userId) => onRemoveUserFromGroup(group._id, userId)}
+                            onAddUserToGroup={handlerAddUserToGroup}
+                            onRemoveUserFromGroup={handlerRemoveUserFromGroup}
                         />
                     </TabsContent>
                 </Tabs>
@@ -83,7 +149,7 @@ export default function ManageGroupDialog({
                             <Label className="cursor-pointer" >Cancelar</Label>
                         </div>
                     </DialogClose>
-                    <Button variant="default">Salvar</Button>
+                    <Button onClick={handleUpdateGroup} variant="default">Salvar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

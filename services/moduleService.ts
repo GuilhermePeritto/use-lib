@@ -1,31 +1,27 @@
-import { convertModelToType, convertTypeToModel } from "@/lib/utils";
 import ModuleModel, { IModule } from "@/models/Module";
-import { Module } from "@/types/module";
 
-export const createModule = async (moduleData: Module): Promise<Module> => {
-  const moduleModelData = convertTypeToModel<Module, IModule>(moduleData);
-  const module = new ModuleModel(moduleModelData);
+export const createModule = async (moduleData: IModule): Promise<IModule> => {
+  const module = new ModuleModel(moduleData);
   const savedModule = await module.save();
-  return convertModelToType<IModule, Module>(savedModule);
+  return savedModule
 };
 
-export const getModules = async (): Promise<Module[]> => {
+export const getModules = async (): Promise<IModule[]> => {
   const modules = await ModuleModel.find();
-  return modules.map(convertModelToType<IModule, Module>);
+  return modules
 };
 
-export const getModuleById = async (id: string): Promise<Module | null> => {
+export const getModuleById = async (id: string): Promise<IModule | null> => {
   const module = await ModuleModel.findById(id);
-  return module ? convertModelToType<IModule, Module>(module) : null;
+  return module
 };
 
-export const updateModule = async (id: string, moduleData: Partial<Module>): Promise<Module | null> => {
-  const moduleModelData = convertTypeToModel<Partial<Module>, IModule>(moduleData);
-  const updatedModule = await ModuleModel.findByIdAndUpdate(id, moduleModelData, { new: true });
-  return updatedModule ? convertModelToType<IModule, Module>(updatedModule) : null;
+export const updateModule = async (id: string, moduleData: Partial<IModule>): Promise<IModule | null> => {
+  const updatedModule = await ModuleModel.findByIdAndUpdate(id, moduleData, { new: true });
+  return updatedModule
 };
 
-export const deleteModule = async (id: string): Promise<Module | null> => {
+export const deleteModule = async (id: string): Promise<IModule | null> => {
   const deletedModule = await ModuleModel.findByIdAndDelete(id);
-  return deletedModule ? convertModelToType<IModule, Module>(deletedModule) : null;
+  return deletedModule
 };

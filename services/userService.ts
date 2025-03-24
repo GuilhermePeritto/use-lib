@@ -1,6 +1,5 @@
-import { convertModelToType, convertTypeToModel, generateToken } from "@/lib/utils";
+import { generateToken } from "@/lib/utils";
 import UserModel, { IUser } from "@/models/User";
-import { User } from "@/types/user";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
 export const loginUser = async (email: string, password: string): Promise<string | null> => {
@@ -9,31 +8,32 @@ export const loginUser = async (email: string, password: string): Promise<string
   return null;
 };
 
-export const createUser = async (userData: User): Promise<User> => {
-  const userModelData = convertTypeToModel<User, IUser>(userData);
-  const user = new UserModel(userModelData);
+export const createUser = async (userData: IUser): Promise<IUser> => {
+  const user = new UserModel(userData);
   const savedUser = await user.save();
-  return convertModelToType<IUser, User>(savedUser);
+  return savedUser
 };
 
-export const getUsers = async (): Promise<User[]> => {
-  const users = await UserModel.find().populate('permissionGroup');
-  return users.map(convertModelToType<IUser, User>);
+export const getUsers = async (): Promise<IUser[]> => {
+  return await UserModel.find().populate('permissionGroup');
 };
 
-export const getUserById = async (token: string): Promise<User | null> => {
-  const decodedToken = jwtDecode<{ user: string } & JwtPayload>(token);
-  const user = await UserModel.findById(decodedToken.user).populate('permissionGroup');
-  return user ? convertModelToType<IUser, User>(user) : null;
+export const getUserById = async (token: string): Promise<IUser | null> => {
+  const payload = jwtDecode<{ user: IUser } & JwtPayload>(token);
+  const user = await UserModel.findById(payload.user._id as string).populate('permissionGroup');
+  return user ? user : null;
+
 };
 
-export const updateUser = async (id: string, userData: Partial<User>): Promise<User | null> => {
-  const userModelData = convertTypeToModel<Partial<User>, IUser>(userData);
-  const updatedUser = await UserModel.findByIdAndUpdate(id, userModelData, { new: true });
-  return updatedUser ? convertModelToType<IUser, User>(updatedUser) : null;
+export const updateUser = async (id: string, userData: Partial<IUser>): Promise<IUser | null> => {
+  const updatedUser = await UserModel
+    .findByIdAndUpdate(id, userData, { new: true })
+    .populate('permissionGroup');
+
+  return updatedUser ? updatedUser : null;
 };
 
-export const deleteUser = async (id: string): Promise<User | null> => {
+export const deleteUser = async (id: string): Promise<IUser | null> => {
   const deletedUser = await UserModel.findByIdAndDelete(id);
-  return deletedUser ? convertModelToType<IUser, User>(deletedUser) : null;
+  return deletedUser ? deletedUser : null;
 };

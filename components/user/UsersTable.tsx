@@ -29,7 +29,7 @@ export default function UsersTable({ users }: UsersTableProps) {
       </TableHeader>
       <TableBody>
         {users.map((user) => (
-          <TableRow key={user.id}>
+          <TableRow key={user._id as string|| user.email}>
             <TableCell>
               <div className="flex items-center gap-3">
                 <Avatar>

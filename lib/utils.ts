@@ -1,7 +1,6 @@
 import { IUser } from "@/models/User";
 import { clsx, type ClassValue } from "clsx";
 import jwt from "jsonwebtoken";
-import { Document } from "mongoose";
 import { twMerge } from "tailwind-merge";
 
 const JWT_SECRET = process.env.JWT_SECRET as string; // Defina no .env
@@ -149,55 +148,3 @@ export function isSameDate(date1: string | Date, date2: string | Date): boolean 
     d1.getDate() === d2.getDate()
   )
 }
-
-/**
- * Converte um tipo (User, Product, etc.) de volta para um documento do Mongoose (IUser, IProduct, etc.).
- * Apenas converte `id` para `_id` e mantém todos os outros campos intactos, incluindo objetos aninhados.
- * @param type Objeto do tipo.
- * @returns Documento do Mongoose.
- * @throws Erro se o tipo for nulo ou indefinido.
- */
-export const convertTypeToModel = <TType, TModel extends Document>(
-  type: TType
-): Partial<TModel> => {
-  if (!type) {
-    throw new Error("Tipo não pode ser nulo ou indefinido.");
-  }
-
-  // Cria uma cópia profunda do objeto
-  const result = JSON.parse(JSON.stringify(type));
-
-  // Converte `id` para `_id` se existir
-  if ("id" in result) {
-    result._id = result.id;
-    delete result.id; // Remove o campo `id` para evitar duplicação
-  }
-
-  return result as Partial<TModel>;
-};
-
-/**
- * Converte um documento do Mongoose (IUser, IProduct, etc.) para um tipo específico (User, Product, etc.).
- * Apenas converte `_id` para `id` e mantém todos os outros campos intactos, incluindo objetos aninhados.
- * @param model Documento do Mongoose.
- * @returns Objeto convertido para o tipo desejado.
- * @throws Erro se o modelo for nulo ou indefinido.
- */
-export const convertModelToType = <TModel extends Document, TType>(
-  model: TModel
-): TType => {
-  if (!model) {
-    throw new Error("Modelo não pode ser nulo ou indefinido.");
-  }
-
-  // Cria uma cópia profunda do objeto
-  const result = JSON.parse(JSON.stringify(model.toObject()));
-
-  // Converte `_id` para `id` se existir
-  if ("_id" in result) {
-    result.id = result._id.toString(); // Converte ObjectId para string
-    delete result._id; // Remove o campo `_id` para evitar duplicação
-  }
-
-  return result as TType;
-};
