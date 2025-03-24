@@ -9,7 +9,7 @@ import { useState } from "react"
 
 export default function UsersFilters() {
     const [searchQuery, setSearchQuery] = useState("")
-    const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
+    const [statusFilter, setStatusFilter] = useState<"all" | "ativo" | "inativo">("all")
     const [permissionFilter, setPermissionFilter] = useState<"all" | "group" | "custom">("all")
 
     const clearFilters = () => {
@@ -54,8 +54,8 @@ export default function UsersFilters() {
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={statusFilter} onValueChange={() => setStatusFilter}>
                                 <DropdownMenuRadioItem value="all">Todos</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="active">Ativos</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="inactive">Inativos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="ativo">Ativos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="inativo">Inativos</DropdownMenuRadioItem>
                             </DropdownMenuRadioGroup>
                             <DropdownMenuSeparator />
                             <DropdownMenuLabel>Tipo de Permissão</DropdownMenuLabel>
@@ -73,7 +73,7 @@ export default function UsersFilters() {
                 <div className="flex flex-wrap gap-2">
                     {statusFilter !== "all" && (
                         <Badge variant="secondary" className="pl-2 pr-1 py-1 h-6">
-                            Status: {statusFilter === "active" ? "Ativos" : "Inativos"}
+                            Status: {statusFilter === "ativo" ? "Ativos" : "Inativos"}
                             <Button
                                 variant="ghost"
                                 size="icon"

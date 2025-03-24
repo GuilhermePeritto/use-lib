@@ -11,9 +11,11 @@ import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ScrollArea } from "../ui/scroll-area";
+import { ConfirmUserTransferDialog } from "./ConfirmUserTransferDialog";
 
 interface UsersTabProps {
     group: IPermissionGroup;
+    setGroup: (group: IPermissionGroup) => void;
     onAddUserToGroup: (groupId: string, userId: string) => Promise<void> | void;
     onRemoveUserFromGroup: (groupId: string, userId: string) => Promise<void> | void;
 }
@@ -24,6 +26,10 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
     const [availableUsers, setAvailableUsers] = useState<IUser[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [popoverSearchQuery, setPopoverSearchQuery] = useState("");
+
+    const [transferDialogOpen, setTransferDialogOpen] = useState(false);
+    const [userToTransfer, setUserToTransfer] = useState<{ user: IUser, groupId: string } | null>(null);
+    const [currentGroupName, setCurrentGroupName] = useState("");
 
     // Fetch available users
     useEffect(() => {
@@ -63,12 +69,45 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
     }, [availableUsers, users, popoverSearchQuery]);
 
     const handleAddUser = async (groupId: string, userId: string) => {
-        await onAddUserToGroup(groupId, userId);
-        setPopoverSearchQuery("");
+        try {
+            // Verificar se o usuário já está em algum grupo
+            const user = availableUsers.find(u => u._id === userId);
+            if (user?.permissionGroup) {
+                // Se estiver em outro grupo, mostrar diálogo de confirmação
+                const currentGroup = await fetch(`/api/permission-groups/${user.permissionGroup._id}`)
+                    .then(res => res.json());
+
+                setUserToTransfer({ user, groupId });
+                setCurrentGroupName(currentGroup.name);
+                setTransferDialogOpen(true);
+            } else {
+                // Se não estiver em nenhum grupo, adicionar diretamente
+                await onAddUserToGroup(groupId, userId);
+                setPopoverSearchQuery("");
+                setUserSearchOpen(false);
+            }
+        } catch (error) {
+            toast.error("Erro ao verificar grupo do usuário");
+        }
     };
 
     const handleRemoveUser = async (groupId: string, userId: string) => {
         await onRemoveUserFromGroup(groupId, userId);
+    };
+
+    const handleConfirmTransfer = async () => {
+        if (!userToTransfer) return;
+
+        try {
+            await onAddUserToGroup(userToTransfer.groupId, userToTransfer.user._id as string);
+            
+            setPopoverSearchQuery("");
+            setUserSearchOpen(false);
+            setTransferDialogOpen(false);
+            toast.success("Usuário transferido com sucesso");
+        } catch (error) {
+            toast.error("Erro ao transferir usuário");
+        }
     };
 
     return (
@@ -90,7 +129,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder="Search users..."
+                                    placeholder="Buscar usuários..."
                                     value={popoverSearchQuery}
                                     onChange={(e) => setPopoverSearchQuery(e.target.value)}
                                     className="w-full pl-9"
@@ -140,7 +179,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
             <div className="mb-4 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                    placeholder="Filter users..."
+                    placeholder="Filtrar usuários..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9"
@@ -153,21 +192,21 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                 )}
             </div>
 
-            <ScrollArea className="flex-1 pr-4">
+            <ScrollArea className="flex-1">
                 <div className="space-y-2">
                     {filteredGroupUsers.length === 0 ? (
                         <div className="text-center py-8 text-muted-foreground">
                             {users.length === 0 ? (
                                 <>
                                     <User className="h-12 w-12 mx-auto mb-2 opacity-20" />
-                                    <p>No users in this permission group</p>
-                                    <p className="text-sm">Click "Add User" to add members</p>
+                                    <p>Não há usuários neste grupo de permissão</p>
+                                    <p className="text-sm">Clique em "Adicionar Usuário" para adicionar membros</p>
                                 </>
                             ) : (
                                 <>
                                     <Search className="h-12 w-12 mx-auto mb-2 opacity-20" />
-                                    <p>No users match your filter</p>
-                                    <p className="text-sm">Try a different search term</p>
+                                    <p>Não há usuários correspondentes à sua pesquisa</p>
+                                    <p className="text-sm">Tente um termo de pesquisa diferente</p>
                                 </>
                             )}
                         </div>
@@ -175,9 +214,9 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                         filteredGroupUsers.map((user) => (
                             <div
                                 key={user._id as string}
-                                className="group flex items-center justify-between p-3 rounded-md border border-border hover:bg-muted/50 transition-colors"
+                                className="group flex items-center justify-between p-3 rounded-md border border-border hover:bg-muted/50 transition-colors w-full"
                             >
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 w-full">
                                     <Avatar>
                                         <AvatarImage src={user.avatar} alt={user.name} />
                                         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -186,12 +225,13 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                                         <p className="font-medium truncate">{user.name}</p>
                                         <p className="text-sm text-muted-foreground truncate">{user.email}</p>
                                     </div>
-                                    <Badge variant="outline">{user.status}</Badge>
+                                    <Badge variant="outline" className={user.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
+                                    >{user.status}</Badge>
                                 </div>
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:opacity-100 focus:opacity-100"
+                                    className="ml-2"
                                     onClick={() => handleRemoveUser(group._id as string, user._id as string)}
                                 >
                                     {<Trash2 className="h-4 w-4 text-destructive" />}
@@ -201,6 +241,15 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                     )}
                 </div>
             </ScrollArea>
+
+            <ConfirmUserTransferDialog
+                open={transferDialogOpen}
+                onOpenChange={setTransferDialogOpen}
+                user={userToTransfer?.user as IUser}
+                currentGroupName={currentGroupName}
+                newGroupName={group.name}
+                onConfirm={handleConfirmTransfer}
+            />
         </div>
     );
 }

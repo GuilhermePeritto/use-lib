@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IPermissionGroup } from "@/models/PermissionGroup";
@@ -88,9 +88,16 @@ export default function CreateGroupDialog({ onAddNewGroup }: CreateGroupDialogPr
                             }
                         />
                     </div>
-                    <Button onClick={handleCreateGroup} disabled={isLoading}>
-                        {isLoading ? "Criando..." : "Criar Grupo"}
-                    </Button>
+                    <div className="w-full flex justify-end gap-2">
+                        <DialogClose>
+                            <div className="bg-muted hover:bg-muted-foreground/20 rounded-md p-3 cursor-pointer">
+                                <Label className="cursor-pointer" >Cancelar</Label>
+                            </div>
+                        </DialogClose>
+                        <Button onClick={handleCreateGroup} >
+                            Criar Grupo
+                        </Button>
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

@@ -7,7 +7,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   avatar?: string;
-  status: "active" | "inactive";
+  status: "ativo" | "inativo";
   useGroupPermissions: boolean;
   permissionGroup: mongoose.Types.ObjectId | IPermissionGroup;
   permissions?: {
@@ -24,7 +24,7 @@ const userSchema: Schema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   avatar: { type: String, default: "./placeholder.svg" },
-  status: { type: String, enum: ["active", "inactive"], default: "active" },
+  status: { type: String, enum: ["ativo", "inativo"], default: "ativo" },
   useGroupPermissions: { type: Boolean, default: true },
   permissionGroup: { type: Schema.Types.ObjectId, ref: "PermissionGroup" },
   permissions: { type: Map, of: [String], default: {} },

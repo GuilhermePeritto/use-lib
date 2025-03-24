@@ -57,14 +57,14 @@ export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
           <Label htmlFor="status">Status</Label>
           <Select
             value={user.status}
-            onValueChange={(value: "active" | "inactive") => setUser(Object.assign(Object.create(Object.getPrototypeOf(user)), user, { status: value }))}
+            onValueChange={(value: "ativo" | "inativo") => setUser(Object.assign(Object.create(Object.getPrototypeOf(user)), user, { status: value }))}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione um status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="active">Ativo</SelectItem>
-              <SelectItem value="inactive">Inativo</SelectItem>
+              <SelectItem value="ativo">Ativo</SelectItem>
+              <SelectItem value="inativo">Inativo</SelectItem>
             </SelectContent>
           </Select>
         </div>

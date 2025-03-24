@@ -57,7 +57,7 @@ export default function UsersTable({ users }: UsersTableProps) {
               </div>
             </TableCell>
             <TableCell>
-              {user.status === "active" ? (
+              {user.status === "ativo" ? (
                 <Badge variant="default" className="bg-green-100 text-green-800">
                   <CheckCircle className="h-3.5 w-3.5 mr-1" />
                   Ativo

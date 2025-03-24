@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { Component } from "lucide-react";
@@ -8,8 +8,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { ScrollArea } from "../ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import PermissionsTab from "./PermissionsTab";
 import UsersTab from "./UsersTab";
@@ -30,7 +28,7 @@ export default function ManageGroupDialog({
     const [filteredModules, setFilteredModules] = useState<IModule[]>(modules);
 
     const filterModules = (name: string) => {
-        setFilteredModules(modules.filter((module) => module.name.toLowerCase().includes(name.toLowerCase())));
+        setFilteredModules(modules.filter((module) => module.label.toLowerCase().includes(name.toLowerCase())));
     }
 
     const handleUpdateGroup = async () => {
@@ -56,51 +54,52 @@ export default function ManageGroupDialog({
     };
 
     const handlerAddUserToGroup = async (groupId: string, userId: string) => {
-        debugger
         try {
-          const response = await fetch('/api/permission-groups/users', {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ groupId, userId }),
-          });
-      
-          const data = await response.json();
-      
-          if (response.ok) {
-            setPermissionGroup(data);
-            toast.success("Usuário adicionado ao grupo com sucesso");
-          } else {
-            toast.error(data.error || "Falha ao adicionar usuário ao grupo");
-          }
+            const response = await fetch('/api/permission-groups/users', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ groupId, userId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setPermissionGroup(data.updatedGroup);
+                onUpdate(data.updatedGroup); // Esta é a chave - atualiza o estado no componente pai
+                toast.success("Usuário adicionado ao grupo com sucesso");
+            } else {
+                toast.error(data.error || "Falha ao adicionar usuário ao grupo");
+            }
         } catch (error) {
-          toast.error("Erro na comunicação com o servidor");
+            toast.error("Erro na comunicação com o servidor");
         }
-      };
-      
-      const handlerRemoveUserFromGroup = async (groupId: string, userId: string) => {
+    };
+
+    const handlerRemoveUserFromGroup = async (groupId: string, userId: string) => {
         try {
-          const response = await fetch('/api/permission-groups/users', {
-            method: "DELETE",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ groupId, userId }),
-          });
-      
-          const data = await response.json();
-      
-          if (response.ok) {
-            setPermissionGroup(data);
-            toast.success("Usuário removido do grupo com sucesso");
-          } else {
-            toast.error(data.error || "Falha ao remover usuário do grupo");
-          }
+            const response = await fetch('/api/permission-groups/users', {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ groupId, userId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setPermissionGroup(data);
+                onUpdate(data); // Esta é a chave - atualiza o estado no componente pai
+                toast.success("Usuário removido do grupo com sucesso");
+            } else {
+                toast.error(data.error || "Falha ao remover usuário do grupo");
+            }
         } catch (error) {
-          toast.error("Erro na comunicação com o servidor");
+            toast.error("Erro na comunicação com o servidor");
         }
-      };
+    };
 
     return (
         <Dialog open={openedDialog} onOpenChange={setOpenedDialog}>
@@ -115,7 +114,7 @@ export default function ManageGroupDialog({
                 <Tabs defaultValue="permissions" className="flex-1 flex flex-col w-full">
                     <TabsList className="grid grid-cols-2 mb-4 w-full">
                         <TabsTrigger value="permissions">Permissões</TabsTrigger>
-                        <TabsTrigger value="users">Usuarios</TabsTrigger>
+                        <TabsTrigger value="users">Usuários</TabsTrigger>
                     </TabsList>
                     <TabsContent value="permissions">
                         <h3 className="text-lg font-medium flex items-center gap-2 mb-2">
@@ -127,30 +126,23 @@ export default function ManageGroupDialog({
                             className="w-full mb-2"
                             onChange={(e) => filterModules(e.target.value)}
                             type="search" />
-                        <ScrollArea className="flex h-[30rem]">
-                            <PermissionsTab
-                                group={permissionGroup}
-                                modules={filteredModules}
-                                setGroup={setPermissionGroup}
-                            />
-                        </ScrollArea>
+                        <PermissionsTab
+                            group={permissionGroup}
+                            modules={filteredModules}
+                            setGroup={setPermissionGroup}
+                            handleUpdateGroup={handleUpdateGroup}
+
+                        />
                     </TabsContent>
                     <TabsContent value="users">
                         <UsersTab
                             group={group}
+                            setGroup={setPermissionGroup}
                             onAddUserToGroup={handlerAddUserToGroup}
                             onRemoveUserFromGroup={handlerRemoveUserFromGroup}
                         />
                     </TabsContent>
                 </Tabs>
-                <DialogFooter className="mt-auto border-t-2 pt-2">
-                    <DialogClose>
-                        <div className="bg-muted hover:bg-muted-foreground/20 rounded-md p-3 cursor-pointer">
-                            <Label className="cursor-pointer" >Cancelar</Label>
-                        </div>
-                    </DialogClose>
-                    <Button onClick={handleUpdateGroup} variant="default">Salvar</Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

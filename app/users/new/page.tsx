@@ -5,19 +5,19 @@ import { UserBasicInfo } from "@/components/user/UserBasicInfo";
 import { UserHeader } from "@/components/user/UserHeader";
 import { UserPassword } from "@/components/user/UserPassword";
 import { UserPermissions } from "@/components/user/UserPermissions";
-import { Module } from "@/types/module";
-import { IPermissionGroup } from "@/types/permission-group";
-import { User } from "@/types/user";
+import { IModule } from "@/models/Module";
+import { IPermissionGroup } from "@/models/PermissionGroup";
+import { IUser } from "@/models/User";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function NewUserPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState<IUser>({
     name: "",
     email: "",
-    status: "active",
+    status: "ativo",
     permissions: {},
     useGroupPermissions: false,
     permissionGroup: {
@@ -25,18 +25,17 @@ export default function NewUserPage() {
       name: "",
       description: "",
       permissions: {},
-      users: [],
-    },
+      users: [] as IUser[],
+    } as IPermissionGroup,
     createdAt: new Date(),
     password: "",
     avatar: "",
     lastLogin: undefined,
     lastPasswordChange: undefined,
-    id: "",
-  });
+  } as IUser);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [modules, setModules] = useState<Module[]>([]);
+  const [modules, setModules] = useState<IModule[]>([]);
   const [permissionGroups, setPermissionGroups] = useState<IPermissionGroup[]>([]);
 
   const handleSubmit = async () => {

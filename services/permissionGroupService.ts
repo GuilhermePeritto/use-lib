@@ -29,7 +29,7 @@ export const updatePermissionGroup = async (
   id: string,
   permissionGroupData: Partial<IPermissionGroup>
 ): Promise<IPermissionGroup | null> => {
-    debugger
+    
   const updatedPermissionGroup = await PermissionGroupModel.findByIdAndUpdate(
     id,
     permissionGroupData,
@@ -51,19 +51,29 @@ export const addUserToGroup = async (groupId: string, userId: string) => {
   session.startTransaction();
 
   try {
-    // 1. Verificar se o usuário já está em outro grupo
+    // 1. Verificar se o usuário está em outro grupo
     const user = await UserModel.findById(userId).session(session);
+    let previousGroupId = null;
+    
     if (user?.permissionGroup) {
-      throw new Error('O usuário já pertence a outro grupo de permissão');
+      previousGroupId = user.permissionGroup._id;
+      
+      // Remover do grupo anterior
+      await PermissionGroupModel.findByIdAndUpdate(
+        previousGroupId,
+        { $pull: { users: userId } },
+        { session }
+      );
     }
 
-    // 2. Atualizar ambos os lados atomicamente
+    // 2. Adicionar ao novo grupo
     await PermissionGroupModel.findByIdAndUpdate(
       groupId,
       { $addToSet: { users: userId } },
       { session, new: true }
     );
 
+    // 3. Atualizar o usuário
     await UserModel.findByIdAndUpdate(
       userId,
       { permissionGroup: groupId },
@@ -72,8 +82,11 @@ export const addUserToGroup = async (groupId: string, userId: string) => {
 
     await session.commitTransaction();
     
-    // Retornar o grupo atualizado
-    return await PermissionGroupModel.findById(groupId).populate("users");
+    // Retornar o grupo atualizado e informações sobre o grupo anterior
+    return {
+      updatedGroup: await PermissionGroupModel.findById(groupId).populate("users"),
+      previousGroupId
+    };
   } catch (error) {
     await session.abortTransaction();
     throw error;
@@ -94,7 +107,6 @@ export const removeUserFromGroup = async (groupId: string, userId: string) => {
       { $pull: { users: userId } },
       { session }
     );
-
     // 2. Remover o grupo do usuário
     await UserModel.findByIdAndUpdate(
       userId,

@@ -99,7 +99,7 @@ export function UserPermissions({ user, setUser, modules, permissionGroups }: Us
           <ScrollArea className="h-[calc(100vh-29rem)] pr-4">
             <div className="space-y-4">
               {modules.map((module) => (
-                <Card key={module.name}>
+                <Card key={module.label}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">{module.label}</CardTitle>
                     <CardDescription>Permissões para o módulo {module.label.toLowerCase()}</CardDescription>
@@ -107,17 +107,17 @@ export function UserPermissions({ user, setUser, modules, permissionGroups }: Us
                   <CardContent>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       {module.actions.map((action) => (
-                        <div key={`${module.name}-${action}`} className="flex items-center space-x-2">
+                        <div key={`${module.label}-${action}`} className="flex items-center space-x-2">
                           <Checkbox
-                            id={`${module.name}-${action}`}
-                            checked={hasPermissionChecked(module.name, action)}
+                            id={`${module.label}-${action}`}
+                            checked={hasPermissionChecked(module.label, action)}
                             onCheckedChange={(checked) => {
                               if (typeof checked === "boolean") {
-                                updatePermission(module.name, action, checked);
+                                updatePermission(module.label, action, checked);
                               }
                             }}
                           />
-                          <Label htmlFor={`${module.name}-${action}`} className="capitalize">
+                          <Label htmlFor={`${module.label}-${action}`} className="capitalize">
                             {action}
                           </Label>
                         </div>

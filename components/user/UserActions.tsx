@@ -31,9 +31,9 @@ export default function UserActions({ user }: UserActionsProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => setShowDeactivateDialog(true)}
-          className={user.status === "active" ? "text-red-600" : "text-green-600"}
+          className={user.status === "ativo" ? "text-red-600" : "text-green-600"}
         >
-          {user.status === "active" ? (
+          {user.status === "ativo" ? (
             <>
               <XCircle className="h-4 w-4 mr-2" />
               Inativar

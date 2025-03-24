@@ -5,7 +5,7 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { IUser } from "@/models/User";
-import { Trash } from "lucide-react";
+import { Trash, Users } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { Label } from "../ui/label";
 import UseCard from "../UseCard";
 import ManageGroupDialog from "./ManageGroupDialog";
 
@@ -56,15 +57,17 @@ export default function GroupCard({
   return (
     <UseCard>
       <CardHeader>
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start pb-2">
           <div>
-            <CardTitle>{group.name}</CardTitle>
+            <div className="flex items-center gap-5">
+              <CardTitle>{group.name}</CardTitle>
+            </div>
             <p className="text-sm text-muted-foreground">{group.description}</p>
           </div>
           <div className="flex gap-2 items-center">
             <AlertDialog>
               <AlertDialogTrigger asChild className="cursor-pointer">
-                  <Trash className="h-4 w-4 text-red-500" />
+                <Trash className="h-4 w-4 text-red-500" />
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -95,33 +98,32 @@ export default function GroupCard({
             />
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {users.map((user) => (
-            <Badge key={user._id as string} variant="secondary">
-              {user.name}
-            </Badge>
-          ))}
-        </div>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
-          {Object.entries(group.permissions).map(([module, permissions]) => (
-            <div key={module} className="space-y-1">
-              <h3 className="font-medium capitalize">{module}</h3>
-              <div className="flex flex-wrap gap-2">
-                {permissions.map((permission) => (
-                  <Badge
-                    key={`${module}-${permission}`}
-                    variant="outline"
-                    className="capitalize"
-                  >
-                    {permission}
-                  </Badge>
-                ))}
+        <div className="relative grid gap-4">
+          {Object.entries(group.permissions)
+            .filter(([module, permissions]) => permissions && permissions.length > 0) // Filtra módulos com permissões
+            .map(([module, permissions]) => (
+              <div key={module} className="space-y-1">
+                <Label className="mb-4">{module}</Label>
+                <div className="flex flex-wrap gap-2">
+                  {permissions.map((permission) => (
+                    <Badge
+                      key={`${module}-${permission}`}
+                      variant="outline"
+                      className="capitalize"
+                    >
+                      {permission}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
+        <div className="absolute flex items-center text-muted-foreground right-6 bottom-0">
+                <Users className="h-4 w-4" />
+                ({users.length})
+              </div>
       </CardContent>
     </UseCard>
   );
