@@ -5,20 +5,20 @@ import { UserBasicInfo } from "@/components/user/UserBasicInfo";
 import { UserHeader } from "@/components/user/UserHeader";
 import { UserPassword } from "@/components/user/UserPassword";
 import { UserPermissions } from "@/components/user/UserPermissions";
-import { Module } from "@/types/module";
-import { IPermissionGroup } from "@/types/permission-group";
-import { User } from "@/types/user";
+import { IModule } from "@/models/Module";
+import { IPermissionGroup } from "@/models/PermissionGroup";
+import { IUser } from "@/models/User";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function UserDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [modules, setModules] = useState<Module[]>([]);
+  const [modules, setModules] = useState<IModule[]>([]);
   const [permissionGroups, setPermissionGroups] = useState<IPermissionGroup[]>([]);
 
   const { id } = use(params);

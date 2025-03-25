@@ -9,7 +9,7 @@ import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { IUser } from "@/models/User";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function NewUserPage() {
@@ -37,6 +37,25 @@ export default function NewUserPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [modules, setModules] = useState<IModule[]>([]);
   const [permissionGroups, setPermissionGroups] = useState<IPermissionGroup[]>([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {  
+          // Buscar módulos e grupos de permissões
+          const modulesResponse = await fetch("/api/modules");
+          const modulesData = await modulesResponse.json();
+          setModules(modulesData);
+  
+          const permissionGroupsResponse = await fetch("/api/permission-groups");
+          const permissionGroupsData = await permissionGroupsResponse.json();
+          setPermissionGroups(permissionGroupsData);
+        } catch (error) {
+          toast.error("Erro ao carregar dados");
+        }
+      };
+  
+      fetchData();
+    }, []);
 
   const handleSubmit = async () => {
     try {

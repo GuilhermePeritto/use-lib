@@ -4,21 +4,21 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
-import { IUser } from "@/models/User"; // Importe a interface IUser
-import { Module } from "@/types/module";
+import { IUser } from "@/models/User";
 import UseCard from "../UseCard";
 
 interface UserPermissionsProps {
   user: IUser;
   setUser: (user: IUser) => void;
-  modules: Module[];
+  modules: IModule[];
   permissionGroups: IPermissionGroup[];
 }
 
 export function UserPermissions({ user, setUser, modules, permissionGroups }: UserPermissionsProps) {
   const updatePermission = (module: string, action: string, checked: boolean) => {
-    setUser((prev: IUser) => {
+    setUser((prev) => {
       const newPermissions = { ...(prev.permissions || {}) };
 
       if (!newPermissions[module]) {
@@ -34,13 +34,18 @@ export function UserPermissions({ user, setUser, modules, permissionGroups }: Us
       return {
         ...prev,
         permissions: newPermissions,
-      };
+      } as IUser;
     });
   };
 
   const hasPermissionChecked = (module: string, action: string) => {
     return user.permissions?.[module]?.includes(action) || false;
   };
+
+  // Verifica se o usuário tem um grupo de permissões e se ele existe na lista de grupos disponíveis
+  const userPermissionGroup = permissionGroups.find(
+    group => group._id === (user.permissionGroup?._id || user.permissionGroup)
+  );
 
   return (
     <UseCard className="h-full">
@@ -63,7 +68,7 @@ export function UserPermissions({ user, setUser, modules, permissionGroups }: Us
               setUser({
                 ...user,
                 useGroupPermissions: checked,
-              })
+              } as IUser)
             }
           />
         </div>
@@ -72,23 +77,23 @@ export function UserPermissions({ user, setUser, modules, permissionGroups }: Us
           <div className="space-y-2">
             <Label htmlFor="permissionGroup">Grupo de Permissões</Label>
             <Select
-              value={user.permissionGroup._id.toString()}
+              value={userPermissionGroup?._id as string}
               onValueChange={(value) => {
-                const selectedGroup = permissionGroups.find((group) => group._id.toString() === value);
-                if (selectedGroup) {
-                  setUser({
-                    ...user,
-                    permissionGroup: selectedGroup,
-                  });
-                }
+                const selectedGroup = permissionGroups.find((group) => group._id === value);
+                setUser({
+                  ...user,
+                  permissionGroup: selectedGroup || null,
+                } as IUser);
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione um grupo" />
+                <SelectValue placeholder="Selecione um grupo">
+                  {userPermissionGroup ? userPermissionGroup.name : "Selecione um grupo"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {permissionGroups.map((group) => (
-                  <SelectItem key={group._id.toString()} value={group._id.toString()}>
+                  <SelectItem key={group._id as string} value={group._id as string}>
                     {group.name}
                   </SelectItem>
                 ))}
