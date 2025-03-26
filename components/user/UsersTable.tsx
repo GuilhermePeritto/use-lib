@@ -33,7 +33,7 @@ export default function UsersTable({ users }: UsersTableProps) {
             <TableCell>
               <div className="flex items-center gap-3">
                 <Avatar>
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={`${user.avatar}?v=${new Date()}`} alt={user.name} />
                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <span className="font-medium">{user.name}</span>

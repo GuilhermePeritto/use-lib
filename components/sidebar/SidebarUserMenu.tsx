@@ -3,15 +3,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useUserAuthenticated } from "@/contexts/userAuthenticated"
 import { ChevronDown, LogOut, User } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 export default function SidebarUserMenu() {
   const router = useRouter()
+  const { user, setUser } = useUserAuthenticated()
 
   const logOut = () => {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    setUser(null)
     router.push("/login")
   }
 
@@ -25,10 +28,10 @@ export default function SidebarUserMenu() {
             className="flex w-full items-center justify-start text-white/80 hover:text-white hover:bg-white/10"
           >
             <Avatar className="h-7.5 w-7.5 ">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User avatar" />
+              <AvatarImage src={`${user?.avatar}?v=${new Date()}`} alt="User avatar" />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
-            <span>Usuário</span>
+            <span className="ml-2">{user?.name}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
