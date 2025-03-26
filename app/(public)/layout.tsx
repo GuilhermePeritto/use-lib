@@ -10,9 +10,13 @@ export default function DashboardLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/logo.svg" />
+        <title>UseLib</title>
+      </head>
       <body>
-          <main>{children}</main>
-          <Toaster />
+        <main>{children}</main>
+        <Toaster />
       </body>
     </html>
   )

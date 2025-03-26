@@ -91,7 +91,7 @@ export default function Login() {
               />
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col gap-4">
+          <CardFooter className="flex flex-col gap-4 pt-2">
             <Button className="w-full bg-blue-600 hover:bg-blue-700" type="submit" disabled={loading}>
               {loading ? "Entrando..." : "Entrar"}
             </Button>

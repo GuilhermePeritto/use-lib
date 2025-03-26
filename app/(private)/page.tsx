@@ -1,9 +1,3 @@
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "Introdução | Site de Documentação Minimalista",
-  description: "Bem-vindo ao nosso site de documentação minimalista",
-}
 
 export default function Home() {
   return (

@@ -16,6 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/logo.svg" />
+        <title>UseLib</title>
+      </head>
       <body className={'antialiased overflow-hidden'} style={{
         fontFamily: 'sans-serif',
       }

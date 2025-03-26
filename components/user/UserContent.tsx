@@ -29,7 +29,7 @@ export default function UserContent() {
   }, []);
 
   return (
-    <Card>
+    <Card className="px-5">
       <UsersTable users={users} setUsers={setUsers as Dispatch<SetStateAction<IUser[]>>}/>
       <UsersPagination totalItems={users.length} />
     </Card>
