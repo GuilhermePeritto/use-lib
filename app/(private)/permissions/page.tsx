@@ -3,6 +3,7 @@
 
 import GroupList from "@/components/permissions/GroupList";
 import { PermissionHeader } from "@/components/permissions/PermissionHeader";
+import Fetch from "@/lib/api";
 import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { useEffect, useState } from "react";
@@ -12,11 +13,11 @@ export default function PermissionsPage() {
     const [groups, setGroups] = useState<IPermissionGroup[]>([]);
     const [modules, setModules] = useState<IModule[]>([]);
 
-    const fetchData = async () => {
+    const FetchData = async () => {
         try {
             const [groupsResponse, modulesResponse] = await Promise.all([
-                fetch("/api/permission-groups"),
-                fetch("/api/modules"),
+                Fetch("/api/permission-groups"),
+                Fetch("/api/modules"),
             ]);
 
             if (!groupsResponse.ok || !modulesResponse.ok) {
@@ -34,7 +35,7 @@ export default function PermissionsPage() {
     };
 
     useEffect(() => {
-        fetchData();
+        FetchData();
     }, []);
 
     const handleAddNewGroup = (newGroup: IPermissionGroup) => {

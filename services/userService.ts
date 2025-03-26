@@ -2,9 +2,12 @@ import { generateToken } from "@/lib/utils";
 import UserModel, { IUser } from "@/models/User";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
-export const loginUser = async (email: string, password: string): Promise<string | null> => {
-  const user = await UserModel.findOne({ email });
-  if (user && (await user.matchPassword(password))) return generateToken(user._id.toString())
+export const loginUser = async (email: string, password: string): Promise<{ token: string; user: IUser } | null> => {
+  const user = await UserModel.findOne({ email, status : "ativo"});
+  if (user && (await user.matchPassword(password))) {
+      const token = generateToken(user); // Gera o token com os dados do usuário
+      return { token, user }; // Retorna ambos
+  }
   return null;
 };
 

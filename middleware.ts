@@ -1,4 +1,4 @@
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Biblioteca para decodificar tokens JWT
 import { NextRequest, NextResponse } from "next/server";
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/login";
@@ -6,13 +6,16 @@ const REDIRECT_WHEN_AUTHENTICATED_ROUTE = "/";
 
 const publicRoutes = [
     { path: "/login", whenAuthenticated: "redirect" },
+    // { path: "/pricing", whenAuthenticated: "next" }, // Exemplo de rota pública acessível mesmo autenticado
 ] as const;
 
 function isTokenValid(token: string): boolean {
     try {
         const decoded = jwtDecode(token);
         const currentTime = Math.floor(Date.now() / 1000);
-        return decoded.exp ? decoded.exp > currentTime : false;
+
+        if (decoded.exp && decoded.exp < currentTime) return false;
+        return true;
     } catch (error) {
         console.error("Erro ao decodificar o token:", error);
         return false;
@@ -22,10 +25,7 @@ function isTokenValid(token: string): boolean {
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
     const publicRoute = publicRoutes.find((route) => route.path === path);
-    
-    // Obtém o token do cabeçalho Authorization (em vez do cookie)
-    const authHeader = request.headers.get('Authorization');
-    const authToken = authHeader?.split(' ')[1]; // Remove o 'Bearer '
+    const authToken = request.cookies.get("token")?.value;
 
     // Se a rota é pública e não há token, permita o acesso
     if (!authToken && publicRoute) {
@@ -53,7 +53,10 @@ export async function middleware(request: NextRequest) {
         if (!isValid) {
             const redirectUrl = request.nextUrl.clone();
             redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE;
-            return NextResponse.redirect(redirectUrl);
+
+            const response = NextResponse.redirect(redirectUrl);
+            response.cookies.delete("token"); // Remove o token inválido
+            return response;
         }
 
         return NextResponse.next(); // Token válido, permita o acesso
@@ -64,6 +67,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+         */
         "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
     ],
 };

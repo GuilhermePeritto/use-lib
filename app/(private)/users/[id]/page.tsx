@@ -5,6 +5,7 @@ import { UserBasicInfo } from "@/components/user/UserBasicInfo";
 import { UserHeader } from "@/components/user/UserHeader";
 import { UserPassword } from "@/components/user/UserPassword";
 import { UserPermissions } from "@/components/user/UserPermissions";
+import Fetch from "@/lib/api";
 import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { IUser } from "@/models/User";
@@ -25,10 +26,10 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
 
   // Buscar dados do usuário e permissões
   useEffect(() => {
-    const fetchData = async () => {
+    const FetchData = async () => {
       try {
         // Buscar usuário
-        const userResponse = await fetch(`/api/users/${id}`);
+        const userResponse = await Fetch(`/api/users/${id}`);
         if (!userResponse.ok) {
           throw new Error("Erro ao carregar usuário");
         }
@@ -36,11 +37,11 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
         setUser(userData);
 
         // Buscar módulos e grupos de permissões
-        const modulesResponse = await fetch("/api/modules");
+        const modulesResponse = await Fetch("/api/modules");
         const modulesData = await modulesResponse.json();
         setModules(modulesData);
 
-        const permissionGroupsResponse = await fetch("/api/permission-groups");
+        const permissionGroupsResponse = await Fetch("/api/permission-groups");
         const permissionGroupsData = await permissionGroupsResponse.json();
         setPermissionGroups(permissionGroupsData);
       } catch (error) {
@@ -50,13 +51,13 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       }
     };
 
-    fetchData();
+    FetchData();
   }, [id]); // Usar id como dependência
 
   // Atualizar usuário
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`/api/users/${id}`, {
+      const response = await Fetch(`/api/users/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

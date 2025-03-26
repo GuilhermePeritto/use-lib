@@ -7,14 +7,24 @@ export async function POST(request: Request) {
 
   try {
     const { email, password } = await request.json();
-    const token = await loginUser(email, password);
+    const resolve = await loginUser(email, password);
 
-    if (token) {
+    if (resolve?.token) {
       // Retorna o token no corpo da resposta
-      return NextResponse.json(
-        { success: true, token }, // Inclui o token na resposta
+      const response = NextResponse.json(
+        { success: true, token: resolve?.token, user: resolve.user },
         { status: 200 }
       );
+
+      response.cookies.set("token", resolve.token, {
+        /* httpOnly: true,
+        secure: process.env.NODE_ENV === "production", */
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24, // 1 dia
+        path: "/",
+      });
+
+      return response;
     } else {
       return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
     }

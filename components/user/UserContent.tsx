@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Fetch from "@/lib/api";
+import { IUser } from "@/models/User";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Card } from "../ui/card";
 import UsersPagination from "./UsersPagination";
@@ -10,9 +12,9 @@ export default function UserContent() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const FetchUsers = async () => {
       try {
-        const response = await fetch("/api/users");
+        const response = await Fetch("/api/users");
         if (!response.ok) {
           throw new Error("Erro ao carregar usuários");
         }
@@ -23,12 +25,12 @@ export default function UserContent() {
       }
     };
 
-    fetchUsers();
-  }, []); // O array vazio garante que o fetch só seja executado uma vez
+    FetchUsers();
+  }, []);
 
   return (
     <Card>
-      <UsersTable users={users} />
+      <UsersTable users={users} setUsers={setUsers as Dispatch<SetStateAction<IUser[]>>}/>
       <UsersPagination totalItems={users.length} />
     </Card>
   );

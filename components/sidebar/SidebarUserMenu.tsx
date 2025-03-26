@@ -13,8 +13,9 @@ export default function SidebarUserMenu() {
   const { user, setUser } = useUserAuthenticated()
 
   const logOut = () => {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
     setUser(null)
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    localStorage.removeItem('token'); // Remove o token
     router.push("/login")
   }
 

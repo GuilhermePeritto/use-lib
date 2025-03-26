@@ -5,15 +5,15 @@ import { formatDate } from "@/lib/utils";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { IUser } from "@/models/User";
 import { Calendar, CheckCircle, XCircle } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 import UserActions from "./UserActions";
 
 interface UsersTableProps {
   users: IUser[];
+  setUsers: Dispatch<SetStateAction<IUser[]>>;
 }
 
-export default function UsersTable({ users }: UsersTableProps) {
-
-  const permissionGroup = users.map(user => user.permissionGroup) as IPermissionGroup[];
+export default function UsersTable({ users, setUsers }: UsersTableProps) {
 
   return (
     <Table>
@@ -28,8 +28,10 @@ export default function UsersTable({ users }: UsersTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user._id as string|| user.email}>
+        {users.map((user) => {
+          const permissionGroup = user.permissionGroup as IPermissionGroup;
+          
+          return <TableRow key={user._id as string || user.email}>
             <TableCell>
               <div className="flex items-center gap-3">
                 <Avatar>
@@ -41,10 +43,9 @@ export default function UsersTable({ users }: UsersTableProps) {
             </TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>
-              {user.useGroupPermissions  ? (
+              {user.useGroupPermissions ? (
                 <Badge variant="secondary">
-                  {permissionGroup.map(group => group?.name || "Sem grupo"
-                    )}
+                  {permissionGroup.name ?? "Sem grupo"}
                 </Badge>
               ) : (
                 <Badge variant="outline">Personalizadas</Badge>
@@ -70,10 +71,10 @@ export default function UsersTable({ users }: UsersTableProps) {
               )}
             </TableCell>
             <TableCell className="text-right">
-              <UserActions user={user} />
+              <UserActions user={user} setUsers={setUsers} />
             </TableCell>
           </TableRow>
-        ))}
+        })}
       </TableBody>
     </Table>
   );

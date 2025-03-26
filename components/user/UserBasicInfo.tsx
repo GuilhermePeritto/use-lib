@@ -4,6 +4,7 @@ import { CardContent, CardDescription, CardHeader, CardTitle } from "@/component
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Fetch from "@/lib/api";
 import { IUser } from "@/models/User"; // Importe a interface IUser
 import { Trash2, Upload } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
@@ -35,7 +36,7 @@ export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
       formData.append("file", file);
       formData.append("userId", user._id as string);
 
-      const response = await fetch("/api/imagens", {
+      const response = await Fetch("/api/imagens", {
         method: "POST",
         body: formData,
       });
@@ -61,7 +62,7 @@ export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
 
   const handleDeleteAvatar = async () => {
     try {
-      const response = await fetch(`/api/imagens/${user._id}`, {
+      const response = await Fetch(`/api/imagens/${user._id}`, {
         method: "DELETE",
       });
 

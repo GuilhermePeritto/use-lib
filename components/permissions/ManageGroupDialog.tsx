@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import Fetch from "@/lib/api";
 import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { Component } from "lucide-react";
@@ -33,7 +34,7 @@ export default function ManageGroupDialog({
 
     const handleUpdateGroup = async () => {
         try {
-            const response = await fetch(`/api/permission-groups/${group._id}`, {
+            const response = await Fetch(`/api/permission-groups/${group._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -55,7 +56,7 @@ export default function ManageGroupDialog({
 
     const handlerAddUserToGroup = async (groupId: string, userId: string) => {
         try {
-            const response = await fetch('/api/permission-groups/users', {
+            const response = await Fetch('/api/permission-groups/users', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,7 +80,7 @@ export default function ManageGroupDialog({
 
     const handlerRemoveUserFromGroup = async (groupId: string, userId: string) => {
         try {
-            const response = await fetch('/api/permission-groups/users', {
+            const response = await Fetch('/api/permission-groups/users', {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',

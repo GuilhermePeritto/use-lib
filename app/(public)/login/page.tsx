@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Fetch from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,7 +23,7 @@ export default function Login() {
 
     try {
       // Faz a chamada à API de login
-      const response = await fetch("/api/auth/login", {
+      const response = await Fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,9 +37,14 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        if (data.success && data.token) localStorage.setItem('token', data.token);
-        toast.success("Login realizado com sucesso!");
+        if (data.success && data.token) {
+          // Armazena o token no localStorage
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
         router.push("/");
+
+        toast.success("Login realizado com sucesso!");
       } else {
         toast.error(data.error || "Email ou senha inválidos");
       }

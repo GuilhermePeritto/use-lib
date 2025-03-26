@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Fetch from "@/lib/api";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { IUser } from "@/models/User";
 import { Plus, Search, Trash2, User, Users, X } from "lucide-react";
@@ -33,9 +34,9 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
 
     // Fetch available users
     useEffect(() => {
-        const fetchUsers = async () => {
+        const FetchUsers = async () => {
             try {
-                const response = await fetch("/api/users");
+                const response = await Fetch("/api/users");
                 const data = await response.json();
                 setAvailableUsers(data);
             } catch (error) {
@@ -43,7 +44,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
             }
         };
 
-        fetchUsers();
+        FetchUsers();
     }, []);
 
     // Filter users in the main list
@@ -74,7 +75,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
             const user = availableUsers.find(u => u._id === userId);
             if (user?.permissionGroup) {
                 // Se estiver em outro grupo, mostrar diálogo de confirmação
-                const currentGroup = await fetch(`/api/permission-groups/${user.permissionGroup._id}`)
+                const currentGroup = await Fetch(`/api/permission-groups/${user.permissionGroup._id}`)
                     .then(res => res.json());
 
                 setUserToTransfer({ user, groupId });

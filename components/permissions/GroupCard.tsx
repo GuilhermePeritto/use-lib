@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Fetch from "@/lib/api";
 import { IModule } from "@/models/Module";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { IUser } from "@/models/User";
@@ -39,7 +40,7 @@ export default function GroupCard({
 
   const handleDeleteGroup = async () => {
     try {
-      const response = await fetch(`/api/permission-groups/${group._id}`, {
+      const response = await Fetch(`/api/permission-groups/${group._id}`, {
         method: "DELETE",
       });
 

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Fetch from "@/lib/api";
 import { IPermissionGroup } from "@/models/PermissionGroup";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -27,7 +28,7 @@ export default function CreateGroupDialog({ onAddNewGroup }: CreateGroupDialogPr
         setIsLoading(true); // Ativa o estado de carregamento
 
         try {
-            const response = await fetch("/api/permission-groups", {
+            const response = await Fetch("/api/permission-groups", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
