@@ -10,9 +10,10 @@ import UserActions from "./UserActions";
 interface UsersTableProps {
   users: IUser[];
   isInitialLoading: boolean;
+  onUserUpdated: () => void;
 }
 
-export default function UsersTable({ users, isInitialLoading }: UsersTableProps) {
+export default function UsersTable({ users, isInitialLoading, onUserUpdated }: UsersTableProps) {
   if (isInitialLoading && users.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -87,7 +88,7 @@ export default function UsersTable({ users, isInitialLoading }: UsersTableProps)
                   )}
                 </TableCell>
                 <TableCell className="text-right">
-                  <UserActions user={user} />
+                <UserActions user={user} onUserUpdated={onUserUpdated} />
                 </TableCell>
               </TableRow>
             );

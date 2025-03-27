@@ -71,6 +71,12 @@ export default function UserContent() {
     setFilters(prev => ({ ...prev, ...newFilters }));
   }, []);
 
+  const handleUserUpdated = useCallback(() => {
+    setPage(1)
+    setUsers([])
+    loadUsers(true)
+  }, [loadUsers])
+
   return (
     <Card className="px-5">
       <div className="mb-4">
@@ -82,6 +88,7 @@ export default function UserContent() {
       <UsersTable 
         users={users} 
         isInitialLoading={isInitialLoading}
+        onUserUpdated={handleUserUpdated}
       />
       <div ref={loadingRef} className="h-10 flex items-center justify-center py-4">
         {hasMore && !isInitialLoading && !isFetching && (

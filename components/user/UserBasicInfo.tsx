@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Fetch from "@/lib/api";
 import { IUser } from "@/models/User"; // Importe a interface IUser
 import { Trash2, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 import UseCard from "../UseCard";
@@ -14,12 +15,14 @@ import UseCard from "../UseCard";
 interface UserBasicInfoProps {
   user: IUser;
   setUser: (user: IUser) => void;
+  loading?: boolean;
 }
 
-export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
+export function UserBasicInfo({ user, setUser, loading }: UserBasicInfoProps) {
   const [cacheBuster, setCacheBuster] = useState(Date.now());
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -49,6 +52,7 @@ export function UserBasicInfo({ user, setUser }: UserBasicInfoProps) {
 
       setCacheBuster(Date.now()); // Força recarregamento da imagem
       setUser(data.user);
+      router.push('/users?updated=' + Date.now());
       toast.success("Avatar alterado com sucesso.");
     } catch (error: any) {
       toast.error(error.message || "Ocorreu um erro ao fazer upload do avatar.");

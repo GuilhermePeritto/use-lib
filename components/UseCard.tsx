@@ -11,7 +11,7 @@ function UseCard({ border, className, ...props}: UseCardProps) {
       <div
         data-slot="card"
         className={cn(
-          "bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm relative overflow-hidden",
+          "bg-card border dark:border-hidden text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm relative overflow-hidden ",
           className
         )}
         {...props}
