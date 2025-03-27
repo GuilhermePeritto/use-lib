@@ -2,12 +2,27 @@ import dbConnect from "@/lib/dbConnect";
 import { createUser, deleteUser, getUsers, updateUser } from "@/services/userService";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
   await dbConnect();
 
   try {
-    const users = await getUsers();
-    return NextResponse.json(users, { status: 200 });
+    const { searchParams } = new URL(request.url);
+    
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') as 'all' | 'ativo' | 'inativo' || 'all';
+    const permissionType = searchParams.get('permissionType') as 'all' | 'group' | 'custom' || 'all';
+
+    const { users, hasMore } = await getUsers({
+      page,
+      limit,
+      search,
+      status,
+      permissionType
+    });
+
+    return NextResponse.json({ users, hasMore }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

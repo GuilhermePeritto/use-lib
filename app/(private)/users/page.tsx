@@ -1,14 +1,13 @@
 import UserContent from "@/components/user/UserContent"
-import UsersFilters from "@/components/user/UsersFilters"
-import UsersHeader from "@/components/user/UsersHeader"
+import { UsersHeader } from "@/components/user/UsersHeader"
 
 export default async function UsersPage() {
   return (
     <div className="container mx-auto py-4 px-4">
-      <UsersHeader />
-      <div className="mb-4">
-        <UsersFilters />
-      </div>
+      <UsersHeader 
+        title="Gerenciamento de Usuários"
+        description="Visualize e gerencie todos os usuários do sistema"
+      />
       <UserContent />
     </div>
   )

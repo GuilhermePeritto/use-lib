@@ -1,20 +1,30 @@
-import { Button } from "@/components/ui/button"
-import { UserPlus } from "lucide-react"
-import Link from "next/link"
+"use client";
 
-export default function UsersHeader() {
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
+interface UserHeaderProps {
+  title: string;
+  description: string;
+}
+
+export function UsersHeader({ title, description }: UserHeaderProps) {
+  const router = useRouter();
+
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
       <div>
-        <h1 className="text-3xl font-bold">Usuários</h1>
-        <p className="text-muted-foreground mt-1">Gerencie os usuários do sistema</p>
+        <h1 className="text-3xl font-bold">{title}</h1>
+        <p className="text-muted-foreground mt-1">{description}</p>
       </div>
-      <Button asChild>
-        <Link href="/users/new">
-          <UserPlus className="h-4 w-4 mr-2" />
+      <div className="flex gap-2">
+        <Button 
+          variant="default" 
+          onClick={() => router.push('/users/create')}
+        >
           Novo Usuário
-        </Link>
-      </Button>
+        </Button>
+      </div>
     </div>
-  )
+  );
 }

@@ -3,8 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Fetch from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { IUser } from "@/models/User"; // Importe a interface IUser
-import { CheckCircle, Eye, MoreHorizontal, XCircle } from "lucide-react";
+import { CheckCircle, Edit, MoreHorizontal, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
@@ -41,7 +42,7 @@ export default function UserActions({ user, setUsers }: UserActionsProps) {
           return prevUser;
         });
       });
-      toast.success(`Usuário ${user.status === "ativo" ? "inativado" : "ativado"} com sucesso`);
+      toast.success(`Usuário ${user.name} ${user.status === "ativo" ? "inativado" : "ativado"} com sucesso`);
     }
     catch (error) {
       toast.error("Erro ao inativar usuário");
@@ -57,23 +58,23 @@ export default function UserActions({ user, setUsers }: UserActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => router.push(`/users/${user._id}`)}>
-          <Eye className="h-4 w-4 mr-2" />
-          Visualizar
+        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push(`/users/${user._id}`)}>
+          <Edit className="h-4 w-4 mr-2" />
+        Editar
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => setShowDeactivateDialog(true)}
-          className={user.status === "ativo" ? "text-red-600" : "text-green-600"}
+          className={cn("cursor-pointer", user.status === "ativo" ? "text-red-600" : "text-green-600")}
         >
           {user.status === "ativo" ? (
             <div onClick={handleSetStatusUser} className="flex">
-              <XCircle className="h-4 w-4 mr-2" />
+              <XCircle className="h-4 w-4 mr-4" />
               Inativar
             </div>
           ) : (
             <div onClick={handleSetStatusUser} className="flex">
-              <CheckCircle className="h-4 w-4 mr-2" />
+              <CheckCircle className="h-4 w-4 mr-4" />
               Ativar
             </div>
           )}
