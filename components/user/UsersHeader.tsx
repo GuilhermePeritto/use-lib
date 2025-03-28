@@ -20,7 +20,7 @@ export function UsersHeader({ title, description }: UserHeaderProps) {
       <div className="flex gap-2">
         <Button 
           variant="default" 
-          onClick={() => router.push('/users/create')}
+          onClick={() => router.push('/users/new')}
         >
           Novo Usuário
         </Button>

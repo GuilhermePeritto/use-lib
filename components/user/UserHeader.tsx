@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 interface UserHeaderProps {
@@ -15,9 +14,6 @@ export function UserHeader({ title, description }: UserHeaderProps) {
         <h1 className="text-3xl font-bold">{title}</h1>
         <p className="text-muted-foreground mt-1">{description}</p>
       </div>
-      <Button variant="ghost" onClick={() => router.back()}>
-        Voltar
-      </Button>
     </div>
   );
 }

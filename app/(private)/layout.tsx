@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/BreadCrumb"
 import AppSidebar from "@/components/sidebar/AppSidebar"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { PermissionProvider } from "@/contexts/usePermission"
 import { UserAuthenticatedProvider } from "@/contexts/userAuthenticated"
 import { ThemeProvider } from "next-themes"
 import { Toaster } from "sonner"
@@ -27,6 +28,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SidebarProvider>
             <UserAuthenticatedProvider>
+              <PermissionProvider>
               <div className="flex h-screen w-screen">
                 <AppSidebar />
                 <SidebarInset className="flex-1 h-full flex flex-col">
@@ -42,6 +44,7 @@ export default function RootLayout({
                   </ScrollArea>
                 </SidebarInset>
               </div>
+              </PermissionProvider>
             </UserAuthenticatedProvider>
           </SidebarProvider>
           <Toaster />

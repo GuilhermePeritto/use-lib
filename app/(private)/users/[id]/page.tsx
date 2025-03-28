@@ -44,9 +44,9 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
         const permissionGroupsResponse = await Fetch("/api/permission-groups");
         const permissionGroupsData = await permissionGroupsResponse.json();
         setPermissionGroups(permissionGroupsData);
+        setLoading(false);
       } catch (error) {
         toast.error("Erro ao carregar dados");
-      } finally {
         setLoading(false);
       }
     };
@@ -77,51 +77,54 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
     }
   };
 
-  if (!user) {
+  if (loading || user) {
+    return (
+      <div className="container mx-auto py-4 px-4">
+        <UserHeader
+          title="Editar Usuário"
+          description="Edite as informações do usuário no sistema"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-4">
+            <UserBasicInfo user={user || undefined} setUser={setUser} loading={loading} />
+            <UserPassword
+              isNewUser={false} // Modo de edição (não é novo usuário)
+              password={password}
+              setPassword={setPassword}
+              confirmPassword={confirmPassword}
+              setConfirmPassword={setConfirmPassword}
+              loading={loading}
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <UserPermissions
+              user={user || undefined}
+              setUser={setUser}
+              modules={modules}
+              permissionGroups={permissionGroups}
+              loading={loading}
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 flex justify-end gap-4">
+          <Button variant="outline" onClick={() => router.back()}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSubmit}>Salvar Alterações</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user && !loading) {
+    debugger
     return (
       <div className="container mx-auto py-4 px-4">
         <p className="text-center">Usuário não encontrado</p>
       </div>
     );
   }
-
-  return (
-    <div className="container mx-auto py-4 px-4">
-      <UserHeader
-        title="Editar Usuário"
-        description="Edite as informações do usuário no sistema"
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-4">
-          <UserBasicInfo user={user} setUser={setUser} loading={loading}/>
-          <UserPassword
-            isNewUser={false} // Modo de edição (não é novo usuário)
-            password={password}
-            setPassword={setPassword}
-            confirmPassword={confirmPassword}
-            setConfirmPassword={setConfirmPassword}
-            loading={loading}
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <UserPermissions
-            user={user}
-            setUser={setUser}
-            modules={modules}
-            permissionGroups={permissionGroups}
-            loading={loading}
-          />
-        </div>
-      </div>
-
-      <div className="mt-4 flex justify-end gap-4">
-        <Button variant="outline" onClick={() => router.back()}>
-          Cancelar
-        </Button>
-        <Button onClick={handleSubmit}>Salvar Alterações</Button>
-      </div>
-    </div>
-  );
 }

@@ -1,5 +1,11 @@
+'use client'
+
+import { WithoutPermission } from "@/components/WithoutPermission";
+import { usePermission } from "@/contexts/usePermission";
+
 export default function ReferenciaAPI() {
-  return (
+  const { hasPermission } = usePermission();
+   return (hasPermission("api-reference", "view")) ? (
     <main className="max-w-3xl mx-auto py-8">
       <h1 className="text-4xl font-bold mb-6">Referência da API</h1>
       <p className="text-xl mb-4">
@@ -48,6 +54,8 @@ export default function ReferenciaAPI() {
         Componentes.
       </p>
     </main>
+  ) : (
+   <WithoutPermission />
   )
-}
+} 
 

@@ -125,3 +125,11 @@ export const removeUserFromGroup = async (groupId: string, userId: string) => {
     session.endSession();
   }
 };
+
+export const findPermissionGroupByUserId = async (userId: string): Promise<IPermissionGroup | null> => {
+    const permissionGroup = await PermissionGroupModel.findOne(
+      { users: userId }
+    )
+
+    return permissionGroup;
+  }

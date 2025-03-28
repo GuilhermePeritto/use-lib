@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
+import { updateUser } from "@/services/userService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -23,9 +24,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   await dbConnect();
 
   try {
+    debugger
     const { id } = params;
     const userData = await request.json();
-    const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
+    const updatedUser = await updateUser(id, userData);
 
     if (!updatedUser) {
       return NextResponse.json({ error: "Erro ao atualizar o usuário" }, { status: 500 });

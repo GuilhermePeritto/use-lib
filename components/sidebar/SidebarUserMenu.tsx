@@ -13,10 +13,11 @@ export default function SidebarUserMenu() {
   const { user, setUser } = useUserAuthenticated()
 
   const logOut = () => {
+    router.push("/login")
     setUser(null)
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    localStorage.removeItem("permissionGroup") // Remove o grupo de permissão
     localStorage.removeItem('token'); // Remove o token
-    router.push("/login")
   }
 
   return (

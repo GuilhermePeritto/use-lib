@@ -1,4 +1,4 @@
-import { generateToken } from "@/lib/utils";
+import { encryptPassword, generateToken } from "@/lib/utils";
 import UserModel, { IUser } from "@/models/User";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
@@ -20,6 +20,9 @@ export const loginUser = async (email: string, password: string): Promise<{ toke
 };
 
 export const createUser = async (userData: IUser): Promise<IUser> => {
+  userData.lastPasswordChange = new Date();
+  userData.password = await encryptPassword(userData.password as string);
+
   const user = new UserModel(userData);
   const savedUser = await user.save();
   return savedUser
@@ -76,6 +79,10 @@ export const getUserById = async (token: string): Promise<IUser | null> => {
 };
 
 export const updateUser = async (id: string, userData: Partial<IUser>): Promise<IUser | null> => {
+  debugger
+  userData.lastPasswordChange = new Date();
+  if(userData.password) userData.password = await encryptPassword(userData.password);
+
   const updatedUser = await UserModel
     .findByIdAndUpdate(id, userData, { new: true })
     .populate('permissionGroup');

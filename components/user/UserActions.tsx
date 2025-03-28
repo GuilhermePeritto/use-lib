@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 import { IUser } from "@/models/User"
-import { CheckCircle, Edit, MenuSquareIcon, XCircle } from "lucide-react"
+import { CheckCircle, Edit, EllipsisVertical, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
@@ -44,7 +44,7 @@ export default function UserActions({ user, onUserUpdated }: {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
-          <MenuSquareIcon className="h-4 w-4" />
+          <EllipsisVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

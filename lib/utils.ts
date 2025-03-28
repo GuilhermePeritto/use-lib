@@ -1,4 +1,5 @@
 import { IUser } from "@/models/User";
+import bcrypt from "bcryptjs";
 import { clsx, type ClassValue } from "clsx";
 import jwt from "jsonwebtoken";
 import { twMerge } from "tailwind-merge";
@@ -147,4 +148,15 @@ export function isSameDate(date1: string | Date, date2: string | Date): boolean 
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate()
   )
+}
+
+/**
+ * Criptografa uma senha usando bcrypt.
+ * @param password - A senha a ser criptografada.
+ * @returns A senha criptografada.
+ */
+export async function encryptPassword(password: string) {
+  const salt = await bcrypt.genSalt(10);
+  const encryptPassword = await bcrypt.hash(password, salt);
+  return encryptPassword;
 }

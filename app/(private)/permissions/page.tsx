@@ -12,6 +12,7 @@ import { toast } from "sonner";
 export default function PermissionsPage() {
     const [groups, setGroups] = useState<IPermissionGroup[]>([]);
     const [modules, setModules] = useState<IModule[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const FetchData = async () => {
         try {
@@ -31,6 +32,8 @@ export default function PermissionsPage() {
             setModules(modulesData);
         } catch (error) {
             toast.error("Erro ao carregar dados");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -64,6 +67,7 @@ export default function PermissionsPage() {
                 modules={modules}
                 onUpdate={handleUpdateGroup}
                 onDelete={handleDeleteGroup}
+                loading={loading}
             />
         </div>
     );

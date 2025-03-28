@@ -32,6 +32,7 @@ export async function POST(request: Request) {
   await dbConnect();
 
   try {
+    debugger
     const userData = await request.json();
     const user = await createUser(userData);
     return NextResponse.json(user, { status: 201 });
@@ -44,6 +45,7 @@ export async function PUT(request: Request) {
   await dbConnect();
 
   try {
+    debugger
     const { id, ...userData } = await request.json();
     const updatedUser = await updateUser(id, userData);
 

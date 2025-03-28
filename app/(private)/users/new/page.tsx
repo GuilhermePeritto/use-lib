@@ -15,7 +15,7 @@ import { toast } from "sonner";
 
 export default function NewUserPage() {
   const router = useRouter();
-  const [user, setUser] = useState<IUser>({
+  const [user, setUser] = useState<IUser | null>({
     name: "",
     email: "",
     status: "ativo",
@@ -61,11 +61,11 @@ export default function NewUserPage() {
   const handleSubmit = async () => {
     try {
       const response = await Fetch("/api/users", {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...user, password }),
+        body: JSON.stringify({ user }),
       });
 
       if (!response.ok) {
@@ -86,7 +86,7 @@ export default function NewUserPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-4">
-          <UserBasicInfo user={user} setUser={setUser} />
+          <UserBasicInfo user={user || undefined} setUser={setUser} />
           <UserPassword
             isNewUser={true}
             password={password}
@@ -98,7 +98,7 @@ export default function NewUserPage() {
 
         <div className="md:col-span-2">
           <UserPermissions
-            user={user}
+            user={user || undefined}
             setUser={setUser}
             modules={modules}
             permissionGroups={permissionGroups}

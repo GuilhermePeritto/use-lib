@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { usePermission } from "@/contexts/usePermission";
 import Fetch from "@/lib/api";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,6 +18,8 @@ export default function Login() {
     email: "",
     password: "",
   });
+
+  const {savePermissionGroup} = usePermission();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,17 +46,24 @@ export default function Login() {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
         }
-        router.push("/");
+        
+        const response = await Fetch(`/api/permission-groups/find-permission/${data.user._id}`);
 
-        toast.success("Login realizado com sucesso!");
+        const permissionGroup = await response.json();
+        if (response.ok) {
+          savePermissionGroup(permissionGroup);
+          router.push("/");
+        } else {
+          toast.error(permissionGroup.error || "Erro ao carregar permissões do usuário");
+        }
       } else {
+        setLoading(false);
         toast.error(data.error || "Email ou senha inválidos");
       }
     } catch (error) {
+      setLoading(false);
       console.error("Erro ao fazer login:", error);
       toast.error("Erro ao fazer login");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -93,6 +104,7 @@ export default function Login() {
           </CardContent>
           <CardFooter className="flex flex-col gap-4 pt-2">
             <Button className="w-full bg-blue-600 hover:bg-blue-700" type="submit" disabled={loading}>
+              <Loader2 className={`w-6 h-6 animate-spin ${loading ? "block" : "hidden"}`} />
               {loading ? "Entrando..." : "Entrar"}
             </Button>
             <p className="text-sm text-muted-foreground text-center">

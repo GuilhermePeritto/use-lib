@@ -38,7 +38,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
             try {
                 const response = await Fetch("/api/users");
                 const data = await response.json();
-                setAvailableUsers(data);
+                setAvailableUsers(data.users);
             } catch (error) {
                 toast.error("Erro ao carregar usuários:" + error);
             }
@@ -61,6 +61,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
     // Filter available users in the popover (excluding already added users)
     const filteredAvailableUsers = useMemo(() => {
         const query = popoverSearchQuery.toLowerCase();
+        if (!availableUsers.length) return [];
         return availableUsers
             .filter(user => !users.some(u => u._id === user._id))
             .filter(user =>
@@ -72,7 +73,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
     const handleAddUser = async (groupId: string, userId: string) => {
         try {
             // Verificar se o usuário já está em algum grupo
-            const user = availableUsers.find(u => u._id === userId);
+            const user = availableUsers?.find(u => u._id === userId);
             if (user?.permissionGroup) {
                 // Se estiver em outro grupo, mostrar diálogo de confirmação
                 const currentGroup = await Fetch(`/api/permission-groups/${user.permissionGroup._id}`)
@@ -101,7 +102,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
 
         try {
             await onAddUserToGroup(userToTransfer.groupId, userToTransfer.user._id as string);
-            
+
             setPopoverSearchQuery("");
             setUserSearchOpen(false);
             setTransferDialogOpen(false);
@@ -119,7 +120,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                     Membros do grupo ({users.length})
                 </h3>
 
-                <Popover open={userSearchOpen} onOpenChange={setUserSearchOpen}>
+                <Popover open={userSearchOpen} onOpenChange={setUserSearchOpen} modal>
                     <PopoverTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-1">
                             <Plus className="h-4 w-4" /> Adicionar Usuário
@@ -143,33 +144,35 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                                 )}
                             </div>
 
-                            <ScrollArea className="h-60">
-                                {filteredAvailableUsers.length === 0 ? (
-                                    <div className="text-center py-4 text-muted-foreground">
-                                        {popoverSearchQuery ? (
-                                            <p>Não foram encontrados usuários correspondentes à sua pesquisa</p>
-                                        ) : (
-                                            <p>Todos os usuários disponíveis já estão neste grupo</p>
-                                        )}
-                                    </div>
-                                ) : (
-                                    filteredAvailableUsers.map((user) => (
-                                        <div
-                                            key={user._id as string}
-                                            className="flex items-center gap-2 p-2 hover:bg-muted/50 cursor-pointer rounded"
-                                            onClick={() => handleAddUser(group._id as string, user._id as string)}
-                                        >
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage src={user.avatar} alt={user.name} />
-                                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-medium truncate">{user.name}</p>
-                                                <p className="text-sm text-muted-foreground truncate">{user.email}</p>
-                                            </div>
+                            <ScrollArea className="h-87 max-h-87 overflow-y-auto">
+                                <div>
+                                    {filteredAvailableUsers.length === 0 ? (
+                                        <div className="text-center py-4 text-muted-foreground">
+                                            {popoverSearchQuery ? (
+                                                <p>Não foram encontrados usuários correspondentes à sua pesquisa</p>
+                                            ) : (
+                                                <p>Todos os usuários disponíveis já estão neste grupo</p>
+                                            )}
                                         </div>
-                                    ))
-                                )}
+                                    ) : (
+                                        filteredAvailableUsers.map((user) => (
+                                            <div
+                                                key={user._id as string}
+                                                className="flex items-center gap-2 p-2 hover:bg-muted/50 cursor-pointer rounded"
+                                                onClick={() => handleAddUser(group._id as string, user._id as string)}
+                                            >
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarImage src={user.avatar} alt={user.name} />
+                                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium truncate">{user.name}</p>
+                                                    <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                             </ScrollArea>
                         </div>
                     </PopoverContent>
@@ -241,7 +244,7 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                         ))
                     )}
                 </div>
-            </ScrollArea>
+            </ScrollArea >
 
             <ConfirmUserTransferDialog
                 open={transferDialogOpen}
@@ -251,6 +254,6 @@ export default function UsersTab({ group, onAddUserToGroup, onRemoveUserFromGrou
                 newGroupName={group.name}
                 onConfirm={handleConfirmTransfer}
             />
-        </div>
+        </div >
     );
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import { PermissionProvider } from "@/contexts/usePermission"
 import { Toaster } from "sonner"
 import "./globals.css"
 
@@ -15,7 +16,9 @@ export default function DashboardLayout({
         <title>UseLib</title>
       </head>
       <body>
-        <main>{children}</main>
+        <PermissionProvider>
+          <main>{children}</main>
+        </PermissionProvider>
         <Toaster />
       </body>
     </html>
